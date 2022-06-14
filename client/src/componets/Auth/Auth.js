@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Avatar,
@@ -13,8 +13,8 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 
 import useStyles from "./styles";
 import Input from "./Input";
-import Login from "./Login.js";
-
+import jwt_decode from "jwt-decode";
+import { useDispatch, useSelector } from "react-redux";
 const initialState = {
   firstName: "",
   lastName: "",
@@ -22,11 +22,11 @@ const initialState = {
   password: "",
   confirmPassword: "",
 };
-
 const SignUp = () => {
   const [form, setForm] = useState(initialState);
   const [isSignup, setIsSignup] = useState(false);
 
+  const dispatch = useDispatch();
   const classes = useStyles();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +45,29 @@ const SignUp = () => {
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handelCallbackResponse = async (res) => {
+    console.log(res);
+    let userObject = jwt_decode(res.credential);
+    console.log(userObject);
+    try {
+      dispatch({
+        type: "AUTH",
+        data: userObject,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    /* global google*/
+    google.accounts.id.initialize({
+      client_id:
+        "216638362675-e3iq2mhpk0978l7vs8u01eo2nnu5vgpl.apps.googleusercontent.com",
+      callback: handelCallbackResponse,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {});
+  }, []);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -104,9 +127,13 @@ const SignUp = () => {
             className={classes.submit}
           >
             {isSignup ? "Sign Up" : "Sign In"}
-          </Button>
-
-          <Login />
+          </Button>{" "}
+          <Button
+            type="submit"
+            fullWidth
+            className={classes.submit}
+            id="signInDiv"
+          ></Button>
           <Grid container justify="center">
             <Grid item>
               <Button onClick={switchMode}>
