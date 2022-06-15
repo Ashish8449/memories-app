@@ -1,21 +1,26 @@
 import mongoose from "mongoose";
+
 import PostMessage from "../models/postMessage.js";
 
 export const getPosts = async (req, res) => {
+  console.log("start run post");
   try {
     const PostMessages = await PostMessage.find();
     console.log(PostMessages);
     res.status(200).json(PostMessages);
   } catch (err) {
     console.log(err.message);
+    res.status(500);
   }
 };
 
 export const createPost = async (req, res) => {
   const post = req.body;
-  const newPost = new PostMessage(post);
+
   try {
+    const newPost = new PostMessage(post);
     await newPost.save();
+    console.log("done");
   } catch (error) {
     res.status(409).json({ message: error.message });
   }

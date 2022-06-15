@@ -15,6 +15,8 @@ import useStyles from "./styles";
 import Input from "./Input";
 import jwt_decode from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { signIn } from "../../actions/auth";
 const initialState = {
   firstName: "",
   lastName: "",
@@ -28,7 +30,7 @@ const SignUp = () => {
 
   const dispatch = useDispatch();
   const classes = useStyles();
-
+  const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => setShowPassword(!showPassword);
@@ -41,20 +43,25 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isSignup) {
+      dispatch(signIn(form, history));
+    } else {
+      dispatch({ type: "SIGNIN", form });
+    }
   };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handelCallbackResponse = async (res) => {
-    console.log(res);
     let userObject = jwt_decode(res.credential);
-    console.log(userObject);
+
     try {
       dispatch({
         type: "AUTH",
         data: userObject,
       });
+      history.push("/");
     } catch (error) {
       console.log(error);
     }

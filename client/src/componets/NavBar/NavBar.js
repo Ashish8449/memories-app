@@ -13,14 +13,12 @@ const Navbar = () => {
   const location = useLocation();
   const history = useHistory();
   const classes = useStyles();
-  console.log(user);
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
 
-    history.push("/");
-
     setUser(null);
+    history.push("/");
   };
   useEffect(() => {
     if (user) history.push("/");

@@ -3,14 +3,19 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import postRoutes from "../Server/routes/post.js";
+// import userRoutes from "../Server/routes/user.js";
 import dotenv from "dotenv";
+import { getPosts } from "./controllers/post.js";
+
 const app = express();
 dotenv.config();
 
-// middleware :
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+// // middleware :
+// app.use(bodyParser.json({ limit: "30mb", extended: true }));
+// app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
 
 const CONNECTION_URI = process.env.CONNECTION_URL;
 const PORT = process.env.PORT || 5000;
@@ -31,3 +36,9 @@ mongoose
 
 // routes
 app.use("/posts", postRoutes);
+// app.use("/user", userRoutes);
+// app.get("/posts", getPosts);
+app.get("/", (req, res) => {
+  res.send("fdjkdfjdkfjdkj");
+});
+
